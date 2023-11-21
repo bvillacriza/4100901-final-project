@@ -1,5 +1,5 @@
 # 4100901-final-project
-This repository contains the example for the final project of the course computation structures.
+This repository contains the example for the final project of the course computation structures. Please go to the [C4Model](Doc/C4Model.md) diagrams for more details on the functionality of the system.
 
 ## Hardware prerequisites
 * The example is a digital lock system featuring an STM32L4 for controling the system, an ESP8266 for interfacing with the internet, a keypad for getting the sequences, and an OLED display for GUI. See more details in the [C4Model](Doc/C4Model.md)
@@ -16,6 +16,7 @@ This repository contains the example for the final project of the course computa
 * Use an ST-LINK to flash the firmware into the STM32.
 
 ## Functionality
+* ***TODO:*** Add more explanation here.
 * The keypad...
 * The Debug console...
 * The internet interface...
