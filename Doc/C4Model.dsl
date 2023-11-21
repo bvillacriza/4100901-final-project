@@ -14,7 +14,8 @@ workspace {
         
         lock_system = softwareSystem "Digital Lock System" "Locks and unlocks by a sequence from the keypad or the internet" {
             stm32 = container "STM32L4" "Control the operation of the system" {
-                ui = component "Controller / Model" "Parse the events from the inputs and updates the outputs"
+                view = component "View" "Update the outputs (GUI and Actuators) accordingly to the model events"
+                model = component "Model" "Parse the events from the controllers(keypad and commands) and updates the view"
                 comm = component "Command Manager" "Parse the commands from the internet and debug console"
                 keypad = component "Keypad Handler" "Parse the events from the keypad"
             }
@@ -34,14 +35,14 @@ workspace {
         lock_system.st_link -> lock_system.stm32 "Programming and debug" "UART / JTAG"
         
         // UI controller-view-model related links
-        lock_system.stm32.ui -> lock_system.display "UI event" "I2C"
-        lock_system.keypad -> lock_system.stm32.keypad "Key pressed" "EXTi"
-        lock_system.stm32.keypad -> lock_system.stm32.ui "Valid key"
         lock_system.esp8266 -> lock_system.stm32.comm "Command from the Internet" "UART"
-        lock_system.stm32.comm -> lock_system.stm32.ui "Valid command"
-        
-        // BSP related links
-        lock_system.stm32.ui -> lock_system.led "LED Control" "GPIO/PWM"
+        lock_system.keypad -> lock_system.stm32.keypad "Key pressed" "EXTi"
+        lock_system.stm32.comm -> lock_system.stm32.model "Valid command"
+        lock_system.stm32.keypad -> lock_system.stm32.model "Valid key"
+    
+        lock_system.stm32.model -> lock_system.stm32.view "Model Event"
+        lock_system.stm32.view -> lock_system.display "UI event" "I2C"
+        lock_system.stm32.view -> lock_system.led "LED Control" "GPIO/PWM"
     }
     // definition of the views: context, container, component ***********************
     views {
