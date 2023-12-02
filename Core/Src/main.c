@@ -25,6 +25,8 @@
 
 #include "lock.h"
 #include "keypad.h"
+#include "gui.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,21 +67,22 @@ static void MX_RTC_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+// Function to override the default _write function for output stream (e.g., printf)
 int _write(int file, char *ptr, int len)
 {
-  // send each byte in blocking mode
+  // Send each byte in blocking mode
   for (uint8_t idx = 0; idx < len; idx++) {
 	  while (LL_USART_IsActiveFlag_TXE(USART2) == 0) {
-		  // wait until Tx Empty flag becomes true
+		  // Wait until Tx Empty flag becomes true
 		  // TODO: add timeout
 	  }
+	  // Transmit data via USART2
 	  LL_USART_TransmitData8(USART2, ptr[idx]);
   }
   return len;
 }
 
-
-
+// Callback function triggered by keypad interrupts
 void keypad_it_callback(uint16_t pin)
 {
 	keypad_event = pin;
@@ -129,23 +132,29 @@ int main(void)
   while (1)
   {
 	  uint8_t cont = 1;
-	  uint8_t key_pressed = keypad_run(&keypad_event);
-	  if (key_pressed == '1'){
-		  cont = 0;
-	  }
+	  	  uint8_t key_pressed = keypad_run(&keypad_event);
 
-	//  if (key_pressed != KEY_PRESSED_NONE)
-	  while (cont ==0){
-		  key_pressed = keypad_run(&keypad_event);
-		  if (key_pressed != KEY_PRESSED_NONE) {
-			 lock_sequence_handler(key_pressed);
-		  }
-	  }
-	  if ((key_pressed != KEY_PRESSED_NONE) && (key_pressed!='1')){
-		  GUI_invalid();
-		  HAL_Delay(2000);
-		  GUI_locked();
-	  }
+	  	  // Check if the '1' key is pressed to break out of the loop
+	  	  if (key_pressed == '1'){
+	  		  cont = 0;
+	  	  }
+
+	  	  // Continue processing key presses while '1' is not pressed
+	  	  while (cont == 0){
+	  		  key_pressed = keypad_run(&keypad_event);
+
+	  		  // If a key is pressed, handle the sequence in the lock system
+	  		  if (key_pressed != KEY_PRESSED_NONE) {
+	  			 lock_sequence_handler(key_pressed);
+	  		  }
+	  	  }
+
+	  	  // Handle invalid key presses
+	  	  if ((key_pressed != KEY_PRESSED_NONE) && (key_pressed!='1')){
+	  		  GUI_invalid();
+	  		  HAL_Delay(2000);
+	  		  GUI_locked();
+	  	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -1,9 +1,11 @@
-
 #include "ring_buffer.h"
 
 /**
- * @brief This function initializes the control struct of the ring buffer
-*/
+ * @brief Initializes the control struct of the ring buffer.
+ * @param ring_buffer: Pointer to the ring buffer structure to be initialized.
+ * @param buffer: Pointer to the data buffer used for the ring buffer.
+ * @param capacity: Capacity of the ring buffer.
+ */
 void ring_buffer_init(ring_buffer_t *ring_buffer, uint8_t *buffer, uint16_t capacity)
 {
 	ring_buffer->buffer = buffer;
@@ -15,9 +17,11 @@ void ring_buffer_init(ring_buffer_t *ring_buffer, uint8_t *buffer, uint16_t capa
 }
 
 /**
- * @brief This function adds a data in the ring buffer
- * @param data: the value to be added
-*/
+ * @brief Adds a data element to the ring buffer.
+ * @param ring_buffer: Pointer to the ring buffer structure.
+ * @param data: The value to be added.
+ * @return 1 if the operation was successful, 0 if the buffer is full.
+ */
 uint8_t ring_buffer_put(ring_buffer_t *ring_buffer, uint8_t data)
 {
 	ring_buffer->buffer[ring_buffer->head] = data;
@@ -29,29 +33,33 @@ uint8_t ring_buffer_put(ring_buffer_t *ring_buffer, uint8_t data)
 
 	if (ring_buffer->head == ring_buffer->tail) {
 		ring_buffer->is_full = 1;
-		return 0;
+		return 0; // Buffer is full
 	}
-	return 1;
+	return 1; // Operation successful
 }
 
 /**
- * @brief This function reads a data from the ring buffer
- * @param data: the pointer to the address to write the data
-*/
+ * @brief Reads a data element from the ring buffer.
+ * @param ring_buffer: Pointer to the ring buffer structure.
+ * @param data: Pointer to the address where the read data will be stored.
+ * @return 1 if the operation was successful, 0 if the buffer is empty.
+ */
 uint8_t ring_buffer_get(ring_buffer_t *ring_buffer, uint8_t *data)
 {
 	if (ring_buffer_is_empty(ring_buffer) == 0) {
 		*data = ring_buffer->buffer[ring_buffer->tail];
 		ring_buffer->tail = (ring_buffer->tail + 1) % ring_buffer->capacity;
 		ring_buffer->is_full = 0;
-		return 1;
+		return 1; // Operation successful
 	}
-	return 0;
+	return 0; // Buffer is empty
 }
 
 /**
- * @brief This function returns the size of the ring buffer
-*/
+ * @brief Returns the size of the ring buffer.
+ * @param ring_buffer: Pointer to the ring buffer structure.
+ * @return The size of the ring buffer.
+ */
 uint16_t ring_buffer_size(ring_buffer_t *ring_buffer)
 {
 	uint16_t size = 0;
@@ -66,7 +74,9 @@ uint16_t ring_buffer_size(ring_buffer_t *ring_buffer)
 }
 
 /**
- * @brief this function checks if the buffer is empty
+ * @brief Checks if the buffer is empty.
+ * @param ring_buffer: Pointer to the ring buffer structure.
+ * @return 1 if the buffer is empty, 0 otherwise.
  */
 uint8_t ring_buffer_is_empty(ring_buffer_t *ring_buffer)
 {
@@ -74,7 +84,9 @@ uint8_t ring_buffer_is_empty(ring_buffer_t *ring_buffer)
 }
 
 /**
- * @brief this function checks if the buffer is full
+ * @brief Checks if the buffer is full.
+ * @param ring_buffer: Pointer to the ring buffer structure.
+ * @return 1 if the buffer is full, 0 otherwise.
  */
 uint8_t ring_buffer_is_full(ring_buffer_t *ring_buffer)
 {
@@ -82,7 +94,8 @@ uint8_t ring_buffer_is_full(ring_buffer_t *ring_buffer)
 }
 
 /**
- * @brief this function resets the buffer to be empty
+ * @brief Resets the buffer to be empty.
+ * @param ring_buffer: Pointer to the ring buffer structure.
  */
 void ring_buffer_reset(ring_buffer_t *ring_buffer)
 {
@@ -90,5 +103,4 @@ void ring_buffer_reset(ring_buffer_t *ring_buffer)
 	ring_buffer->head = 0;
 	ring_buffer->is_full = 0;
 }
-
 
