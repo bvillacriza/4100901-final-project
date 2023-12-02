@@ -13,13 +13,28 @@ void GUI_init(void)
 	GUI_locked();
 }
 
+void GUI_invalid(void)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(5, 5);
+	ssd1306_WriteString("invalid", Font_16x26, White);
+	ssd1306_UpdateScreen();
+}
+
 void GUI_locked(void)
 {
 	ssd1306_Fill(Black);
-	ssd1306_SetCursor(20, 5);
-	ssd1306_WriteString("Locked", Font_16x26, White);
-	ssd1306_DrawBitmap(50, 35, locked, 30, 30, White);
-	ssd1306_UpdateScreen();
+    ssd1306_SetCursor(20, 5);
+    ssd1306_WriteString("Locked", Font_16x26, White);
+    ssd1306_SetCursor(7, 30);
+    ssd1306_WriteString("1:Empezar a escribir", Font_6x8, White);
+    ssd1306_SetCursor(18, 37);
+    ssd1306_WriteString("contraseña", Font_6x8, White);
+    ssd1306_SetCursor(7, 47);
+    ssd1306_WriteString("2:Pantalla de bloqueo", Font_6x8, White);
+    ssd1306_UpdateScreen();
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+
 }
 
 void GUI_unlocked(void)
@@ -37,6 +52,13 @@ void GUI_update_password_init(void)
 	ssd1306_WriteString("New PW:", Font_16x26, White);
 	ssd1306_UpdateScreen();
 }
+void GUI_start_password_init(void)
+{
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(5, 5);
+	ssd1306_WriteString("Star PW", Font_16x26, White);
+	ssd1306_UpdateScreen();
+}
 
 void GUI_update_password(uint8_t *password)
 {
@@ -51,4 +73,3 @@ void GUI_update_password_success(void)
 	ssd1306_WriteString("Success!", Font_16x26, White);
 	ssd1306_UpdateScreen();
 }
-

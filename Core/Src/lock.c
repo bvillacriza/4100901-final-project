@@ -66,10 +66,15 @@ static uint8_t lock_get_password(void)
 
 static uint8_t lock_validate_password(void)
 {
+	uint8_t password_shadow[MAX_PASSWORD + 1]  = {
+			'-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '\0'
+	};
 	uint8_t sequence[MAX_PASSWORD];
 	uint8_t seq_len = ring_buffer_size(&keypad_rb);
+	GUI_update_password(password_shadow);
 	for (uint8_t idx = 0; idx < seq_len; idx++) {
 		ring_buffer_get(&keypad_rb, &sequence[idx]);
+
 	}
 	if (memcmp(sequence, password, 4) == 0) {
 		return 1;
@@ -104,12 +109,30 @@ void lock_init(void)
 
 void lock_sequence_handler(uint8_t key)
 {
+	//crar pantalla de desbloque
+	GUI_start_password_init();
+	uint8_t password_shadow[MAX_PASSWORD + 1]  = {
+				'-'};
+
+	uint8_t new_password[MAX_PASSWORD];
+	uint8_t idx = 0;
+	uint8_t ban;
+	GUI_update_password(password_shadow);
+	password_shadow[idx] = '*';
+	new_password[idx++] = key;
+	GUI_update_password(new_password);
+	HAL_Delay(100);
+	GUI_update_password(password_shadow);
 	if (key == '*') {
 		lock_update_password();
+
 	} else if (key == '#') {
 		lock_open_lock();
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+
 	} else {
 		ring_buffer_put(&keypad_rb, key);
+
 	}
 
 }

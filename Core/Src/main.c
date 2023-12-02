@@ -128,9 +128,23 @@ int main(void)
   printf("Started\r\n");
   while (1)
   {
+	  uint8_t cont = 1;
 	  uint8_t key_pressed = keypad_run(&keypad_event);
-	  if (key_pressed != KEY_PRESSED_NONE) {
-		  lock_sequence_handler(key_pressed);
+	  if (key_pressed == '1'){
+		  cont = 0;
+	  }
+
+	//  if (key_pressed != KEY_PRESSED_NONE)
+	  while (cont ==0){
+		  key_pressed = keypad_run(&keypad_event);
+		  if (key_pressed != KEY_PRESSED_NONE) {
+			 lock_sequence_handler(key_pressed);
+		  }
+	  }
+	  if ((key_pressed != KEY_PRESSED_NONE) && (key_pressed!='1')){
+		  GUI_invalid();
+		  HAL_Delay(2000);
+		  GUI_locked();
 	  }
     /* USER CODE END WHILE */
 
